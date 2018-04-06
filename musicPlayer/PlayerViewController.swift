@@ -21,23 +21,22 @@ class PlayerViewController: UIViewController {
             selectedIndex = selectedIndex - 1
             player.nowPlayingItem = query.items?[selectedIndex]
             player.play()
-            
+            play()
         }
         else
         {
             player.nowPlayingItem = query.items?[selectedIndex]
             player.play()
+            play()
         }
     }
     
     @IBAction func nextButton(_ sender: Any) {
-        
         selectedIndex = selectedIndex + 1
         player.nowPlayingItem = query.items?[selectedIndex]
         player.play()
         timer.invalidate()
         play()
-        
     }
     
     
@@ -66,20 +65,6 @@ class PlayerViewController: UIViewController {
         player.currentPlaybackTime = TimeInterval(audioslider.value * 60)
     }
     
-    
-    func play()
-    {
-        
-        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateplayertime), userInfo: nil, repeats: true)
-        titleLabel.text = query.items?[selectedIndex].title
-        dur = ((query.items?[selectedIndex].playbackDuration)! / 60)
-        print(dur)
-        let c:String = String(format:"%.2f", dur)
-        playbackTimeLabel.text = c
-    }
-    
-    
-    
     override func viewDidLoad() {
         super.viewDidLoad()
         playpausebutton.setTitle("PAUSE", for: .normal)
@@ -102,6 +87,17 @@ class PlayerViewController: UIViewController {
         // Dispose of any resources that can be recreated.
     }
     
+    func play()
+    {
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateplayertime), userInfo: nil, repeats: true)
+        titleLabel.text = query.items?[selectedIndex].title
+        dur = ((query.items?[selectedIndex].playbackDuration)! / 60)
+        let c:String = String(format:"%.2f", dur)
+        playbackTimeLabel.text = c
+    }
+    
+    
+    
     
     @objc func updateplayertime()
     {
@@ -109,6 +105,5 @@ class PlayerViewController: UIViewController {
         let y = (player.currentPlaybackTime)
         self.currenttimeLabel.text = ("\(intmax_t(y/3600)):\(intmax_t((y.truncatingRemainder(dividingBy: 3600))/60)):\(intmax_t(y.truncatingRemainder(dividingBy: 60)))")
         self.audioslider.setValue(Float(x), animated: true)
-        
     }
 }

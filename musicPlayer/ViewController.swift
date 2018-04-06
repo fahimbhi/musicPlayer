@@ -7,7 +7,6 @@ import AVFoundation
 
 class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, MPMediaPickerControllerDelegate  {
     
-    
     @IBOutlet var tableView : UITableView?
     
     override func viewDidLoad() {
@@ -51,6 +50,4 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.present(nextViewController, animated:false, completion:nil)
     }
 }
-
-
 
