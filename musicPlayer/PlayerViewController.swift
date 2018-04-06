@@ -16,20 +16,37 @@ class PlayerViewController: UIViewController {
     @IBOutlet weak var titleLabel: UILabel!
     
     @IBAction func previousButton(_ sender: Any) {
-        player.skipToPreviousItem()
+        if selectedIndex != 0
+        {
+            selectedIndex = selectedIndex - 1
+            player.nowPlayingItem = query.items?[selectedIndex]
+            player.play()
+            
+        }
+        else
+        {
+            player.nowPlayingItem = query.items?[selectedIndex]
+            player.play()
+        }
     }
     
     @IBAction func nextButton(_ sender: Any) {
-        player.skipToNextItem()
+        
         selectedIndex = selectedIndex + 1
+        player.nowPlayingItem = query.items?[selectedIndex]
+        player.play()
         timer.invalidate()
+        play()
+        
     }
+    
     
     @IBAction func backButton(_ sender: Any) {
         let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
         let nextViewController = storyBoard.instantiateViewController(withIdentifier: "listVC") as! ViewController
         self.present(nextViewController, animated:false, completion:nil)
     }
+    
     
     @IBAction func playpauseButton(_ sender: Any) {
         if playpausebutton.titleLabel?.text == "PLAY"
@@ -52,35 +69,46 @@ class PlayerViewController: UIViewController {
     
     func play()
     {
-        currenttimeLabel.text = "0:0:0"
-        titleLabel.text = query.items?[selectedIndex].title
+        
         timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateplayertime), userInfo: nil, repeats: true)
+        titleLabel.text = query.items?[selectedIndex].title
         dur = ((query.items?[selectedIndex].playbackDuration)! / 60)
+        print(dur)
         let c:String = String(format:"%.2f", dur)
         playbackTimeLabel.text = c
     }
     
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
+        playpausebutton.setTitle("PAUSE", for: .normal)
+        currenttimeLabel.text = "0:0:0"
+        titleLabel.text = query.items?[selectedIndex].title
         player.nowPlayingItem = query.items?[selectedIndex]
         player.play()
-        play()
-        playpausebutton.setTitle("PAUSE", for: .normal)
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(self.updateplayertime), userInfo: nil, repeats: true)
+        dur = ((query.items?[selectedIndex].playbackDuration)! / 60)
+        let c:String = String(format:"%.2f", dur)
+        playbackTimeLabel.text = c
         audioslider.minimumValue = 0
         audioslider.maximumValue = Float(dur)
         audioslider.isContinuous = false
         audioslider.value = 0
     }
     
-   
+    override func didReceiveMemoryWarning() {
+        super.didReceiveMemoryWarning()
+        // Dispose of any resources that can be recreated.
+    }
+    
+    
     @objc func updateplayertime()
-        
     {
-        DispatchQueue.main.async {
-            let x = ((player.currentPlaybackTime) / 60)
-            let y = (player.currentPlaybackTime)
-            self.currenttimeLabel.text = ("\(intmax_t(y/3600)):\(intmax_t((y.truncatingRemainder(dividingBy: 3600))/60)):\(intmax_t(y.truncatingRemainder(dividingBy: 60)))")
-            self.audioslider.setValue(Float(x), animated: true)
-        }
+        let x = ((player.currentPlaybackTime) / 60)
+        let y = (player.currentPlaybackTime)
+        self.currenttimeLabel.text = ("\(intmax_t(y/3600)):\(intmax_t((y.truncatingRemainder(dividingBy: 3600))/60)):\(intmax_t(y.truncatingRemainder(dividingBy: 60)))")
+        self.audioslider.setValue(Float(x), animated: true)
+        
     }
 }
